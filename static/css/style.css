@@ -24,3 +24,17 @@ footer {
   /* Чтобы footer не уменьшался */
   flex-shrink: 0;
 }
+
+
+.avatar {
+  width: 200px;
+  height: 200px;
+  border-radius: 150px;
+  margin: 15px;
+}
+
+.name {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}

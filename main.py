@@ -72,7 +72,7 @@ def register():
         db_sess.add(user)
         db_sess.commit()
 
-        return redirect('/auth', cur_url=request.base_url.split('/')[-1])
+        return redirect('/auth')
 
     return render_template('signup.html', cur_url=request.base_url.split('/')[-1], title='Регистрация', form_reg=form_reg)
 
@@ -89,7 +89,7 @@ def login():
 
         if user and user.check_password(form_auth.password.data):
             login_user(user, remember=form_auth.remember_me.data)
-            return redirect("/", cur_url=request.base_url.split('/')[-1])
+            return redirect("/")
 
         return render_template('login.html',
                                message="Неправильный логин или пароль",
