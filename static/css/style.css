@@ -8,6 +8,10 @@
   font-size: 22px;
 }
 
+a {
+  text-decoration:none
+}
+
 body {
   margin: 0;
   display: flex;
@@ -37,4 +41,12 @@ footer {
   display: flex;
   flex-direction: row;
   align-items: center;
+}
+
+#checkChangePass:checked ~ #passInp {
+  display: block;
+}
+
+#passInp {
+  display: none;
 }

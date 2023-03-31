@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+<form class="mt-3" action="" method="POST" enctype="multipart/form-data" novalidate>
+    {{ form_useredit.hidden_tag() }}
+
+    <h1 class="mb-3">Редактирование пользователя {{ current_user.name }}</h1>
+
+    <div class="mb-3">
+        <div class="input-group">
+            <span class="input-group-text">{{ form_useredit.name.label }}&nbsp;и&nbsp;{{ form_useredit.surname.label
+                }}</span>
+            {{ form_useredit.name(class="form-control", value="{}".format(current_user.name)) }}
+            {{ form_useredit.surname(class="form-control", value="{}".format(current_user.surname)) }}
+        </div>
+
+        {% for error in form_useredit.name.errors %}
+        <div class="alert alert-danger mt-2" role="alert">
+            {{ error }}
+        </div>
+        {% endfor %}
+
+        {% for error in form_useredit.surname.errors %}
+        <div class="alert alert-danger" role="alert">
+            {{ error }}
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="mb-3">
+        <div class="input-group flex-nowrap">
+            <span class="input-group-text" id="addon-wrapping">{{ form_useredit.email.label }}</span>
+            {{ form_useredit.email(class="form-control", value="{}".format(current_user.email)) }}
+        </div>
+        {% for error in form_useredit.email.errors %}
+        <div class="alert alert-danger mt-2" role="alert">
+            {{ error }}
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="mb-3">
+        <div class="input-group mb-3">
+            <label class="input-group-text" for="inputAvatar">Обновить аватар</label>
+            <input type="file" class="form-control" id="inputAvatar" name="newAvatar">
+        </div>
+    </div>
+
+    <!-- сюда вводим старый пароль для подтверждения -->
+    <div class="mb-3">
+        <div class="input-group flex-nowrap">
+            <span class="input-group-text" id="addon-wrapping">{{ form_useredit.old_password.label }}</span>
+            {{ form_useredit.old_password(class="form-control", type="password") }}
+        </div>
+        {% for error in form_useredit.old_password.errors %}
+        <div class="alert alert-danger mt-2" role="alert">
+            {{ error }}
+        </div>
+        {% endfor %}
+    </div>
+
+
+
+
+
+
+    <div class="mb-3">{{ form_useredit.submit(type="submit", class="btn btn-info") }}</div>
+
+    {% if message %}
+    <div class="alert alert-danger mt-2" role="alert">{{ message }}</div>
+    {% endif %}
+
+    {% if form_useredit.errors %}
+    {{ form_useredit.errors }}
+    {% endif %}
+
+
+</form>
+
+<div class="mb-3">
+    <a class="button mb-3" href="/change_pass/{{ current_user.id }}">
+        <button class="btn btn-secondary">Сменить пароль</button>
+    </a>
+</div>
+
+{% endblock content %}

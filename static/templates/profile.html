@@ -6,19 +6,38 @@
 
 
 <div class="container">
-    <!--<a class="button" href="/logout"><button class="btn btn-danger">Выйти</button></a>-->
+    {% if id == current_user.id %}
+    <div class="d-flex justify-content-end">
+        <a class="button me-2" href="/new_publication"><button class="btn btn-warning">Новая публикация</button></a>
+        <a class="button" href="/edit_profile/{{ current_user.id }}"><button
+                class="btn btn-info">Редактировать</button></a>
+        <a class="button ms-2" href="/logout"><button class="btn btn-danger">Выйти</button></a>
+    </div>
+    {% endif %}
+
 
     <div class="container d-flex align-items-center">
         <img class="avatar" src="/static/images/default_avatar-transformed.png">
 
         <div class="container">
-            <h1>Вася Пупкин</h1>
-            <p>Egestas cras felis aliquam euismod primis, blandit suscipit lorem per gravida scelerisque,
-                vivamus
-                tristique blandit nunc, facilisi volutpat magna feugiat. Mollis ipsum massa egestas, eros magnis sit
-                libero lacus nullam, accumsan facilisis accumsan eget magnis volutpat, consectetuer duis sed parturient
-                mi. </p>
+            <h1>{{ name }} {{ surname }}</h1>
+            <p>{{ about }}</p>
         </div>
+    </div>
+
+    <div class="container">
+        {% for item in publications %}
+        <div class="col-md6 border rounded">
+            <div>
+                {{ item.content }}
+            </div>
+
+            <div>
+                Автор - {{ item.user.name }}, Дата написания - {{ item.created_date }}
+            </div>
+        </div>
+
+        {% endfor %}
     </div>
 </div>
 

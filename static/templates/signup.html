@@ -61,10 +61,6 @@
         {% endfor %}
     </div>
 
-    <div class="mb-3">
-        {{ form_reg.remember_me(class="btn-check", id="btn-check-outlined") }}
-        {{ form_reg.remember_me.label(class="btn btn-outline-secondary", for="btn-check-outlined") }}
-    </div>
     <div class="mb-3">{{ form_reg.submit(type="submit", class="btn btn-info") }}</div>
 
     {% if message %}
