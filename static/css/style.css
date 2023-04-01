@@ -31,8 +31,10 @@ footer {
 
 
 .avatar {
-  width: 200px;
-  height: 200px;
+  min-width: 100px;
+  min-height: 100px;
+  max-width: 220px;
+  max-height: 220px;
   border-radius: 150px;
   margin: 15px;
 }
@@ -49,4 +51,9 @@ footer {
 
 #passInp {
   display: none;
+}
+
+.friends-avatar {
+  max-width: 150px;
+  max-height: 150px;
 }

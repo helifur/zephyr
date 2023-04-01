@@ -7,5 +7,4 @@ class EditUserForm(FlaskForm):
     name = StringField('Имя', validators=[DataRequired()])
     surname = StringField('Фамилия', validators=[DataRequired()])
     email = EmailField('Адрес эл. почты', validators=[DataRequired()])
-    old_password = PasswordField('Старый пароль', validators=[DataRequired()])
     submit = SubmitField('Подтвердить')

@@ -11,13 +11,15 @@
         <a class="button me-2" href="/new_publication"><button class="btn btn-warning">Новая публикация</button></a>
         <a class="button" href="/edit_profile/{{ current_user.id }}"><button
                 class="btn btn-info">Редактировать</button></a>
+        <a class="button ms-2" href="/change_avatar/{{ current_user.id }}"><button class="btn btn-secondary">Сменить
+                аватар</button></a>
         <a class="button ms-2" href="/logout"><button class="btn btn-danger">Выйти</button></a>
     </div>
     {% endif %}
 
 
     <div class="container d-flex align-items-center">
-        <img class="avatar" src="/static/images/default_avatar-transformed.png">
+        <img class="avatar" src="/userava/{{ id }}">
 
         <div class="container">
             <h1>{{ name }} {{ surname }}</h1>

@@ -40,7 +40,7 @@
 
               {% if current_user.is_authenticated %}
 
-              {% if 'profile' in cur_url or 'pass' in cur_url %}
+              {% if 'profile' in cur_url or 'change' in cur_url %}
               <a class="nav-link active" aria-current="page" href="/profile/{{ current_user.id }}">Профиль</a>
               {% else %}
               <a class="nav-link" aria-current="page" href="/profile/{{ current_user.id }}">Профиль</a>
@@ -52,7 +52,7 @@
               <a class="nav-link" href="/messages">Сообщения</a>
               {% endif %}
 
-              {% if cur_url == 'friends' %}
+              {% if 'friends' in cur_url %}
               <a class="nav-link active" href="/friends">Друзья</a>
               {% else %}
               <a class="nav-link" href="/friends">Друзья</a>
@@ -94,7 +94,7 @@
         {% if current_user.is_authenticated %}
 
         <li class="nav-item">
-          <a href="/profile" class="nav-link px-2 text-muted">Профиль</a>
+          <a href="/profile/{{ current_user.id }}" class="nav-link px-2 text-muted">Профиль</a>
         </li>
 
         <li class="nav-item">

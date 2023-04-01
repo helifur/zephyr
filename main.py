@@ -1,5 +1,5 @@
-from flask import Flask, flash, render_template, redirect, request
-from flask_login import LoginManager, login_required, login_user, logout_user
+from flask import Flask, flash, render_template, redirect, request, make_response
+from flask_login import LoginManager, login_required, login_user, logout_user, current_user
 
 from static.modules.signup import RegisterForm
 from static.modules.auth import LoginForm
@@ -17,7 +17,7 @@ login_manager.init_app(app)
 
 # инициализируем базу данных
 db_session.global_init("static/db/data.db")
-db_sess = db_session.create_session()
+# db_sess = db_session.create_session()
 # publ = Publication(content="Всем привет!", user_id=1, is_private=False)
 # db_sess.add(publ)
 # db_sess.commit()
@@ -45,8 +45,44 @@ def index():
     return render_template("index.html", cur_url=request.base_url.split('/')[-1])
 
 
+"""==========ПОЛЬЗОВАТЕЛЬ/АВАТАРЫ=============="""
+
+
+# получить аватар
+@app.route('/userava/<int:id>')
+@login_required
+def userava(id):
+    img = current_user.getAvatar(app, id)
+
+    if not img:
+        return ""
+
+    h = make_response(img)
+    h.headers['Content-Type'] = 'image/png'
+    return h
+
+
+# смена аватара
+@app.route('/change_avatar/<int:id>', methods=["GET", "POST"])
+@login_required
+def new_avatar(id):
+    if request.method == "POST":
+        db_sess = db_session.create_session()
+        user = db_sess.query(User).filter(User.id == id).first()
+
+        file = request.files['newAvatar']
+        ext = file.filename.rsplit('.', 1)[1]
+        print(ext)
+        if ext == "png" or ext == "PNG" or ext == "jpg" or ext == "JPG":
+            user.updateUserAvatar(file.read(), user.id)
+            return redirect(f'/profile/{current_user.id}')
+
+    return render_template("editavatar.html", cur_url=request.base_url.split('/')[-2])
+
+
 # профиль
 @app.route('/profile/<int:id>')
+@login_required
 def profile(id):
     db_sess = db_session.create_session()
     personal_data = db_sess.query(
@@ -65,6 +101,7 @@ def profile(id):
 
 # редактирование профиля
 @app.route('/edit_profile/<int:id>', methods=['GET', 'POST'])
+@login_required
 def edit_profile(id):
     db_sess = db_session.create_session()
 
@@ -78,25 +115,24 @@ def edit_profile(id):
             return render_template("edituser.html", cur_url=request.base_url.split('/')[-2],
                                    form_useredit=form_useredit, message="Пользователь с таким email-ом уже есть!")
 
-        if not user.check_password(form_useredit.old_password.data):
-            return render_template("edituser.html", cur_url=request.base_url.split('/')[-2],
-                                   form_useredit=form_useredit, message="Неправильный текущий пароль!")
+        # if not user.check_password(form_useredit.old_password.data):
+        #     return render_template("edituser.html", cur_url=request.base_url.split('/')[-2],
+        #                            form_useredit=form_useredit, message="Неправильный текущий пароль!")
 
         if user:
             user.name = form_useredit.name.data
             user.surname = form_useredit.surname.data
             user.email = form_useredit.email.data
-            f = request.files['newAvatar']
-            print(f.read())
 
-            db_sess.commit()
-            return redirect(f'/profile/{id}')
+        db_sess.commit()
+        return redirect(f'/profile/{id}')
 
     return render_template("edituser.html", cur_url=request.base_url.split('/')[-2], form_useredit=form_useredit)
 
 
 # смена пароля
 @app.route('/change_pass/<int:id>', methods=['GET', 'POST'])
+@login_required
 def ch_pass(id):
     db_sess = db_session.create_session()
 
@@ -120,6 +156,19 @@ def ch_pass(id):
             return redirect(f'/profile/{id}')
 
     return render_template("chuserpass.html", cur_url=request.base_url.split('/')[-2], form_chpass=form_chpass)
+
+
+"""============END PROFILE==================="""
+
+
+# друзья
+@app.route('/friends')
+def friends():
+    db_sess = db_session.create_session()
+
+    data = db_sess.query(User).all()
+
+    return render_template("friends.html", data=data)
 
 
 # регистрация

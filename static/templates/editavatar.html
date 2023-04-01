@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<form class="mt-3" method="post" enctype="multipart/form-data">
+    <h1 class="mb-3">Смена аватара</h1>
+
+    <div class="mb-3">
+        <div class="input-group mb-3">
+            <label class="input-group-text" for="inputAvatar">Обновить аватар</label>
+            <input type="file" class="form-control" id="inputAvatar" name="newAvatar">
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <input class="btn btn-info" id="submit" name="submit" type="submit" value="Подтвердить">
+    </div>
+</form>
+{% endblock content %}
