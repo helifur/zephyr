@@ -3,9 +3,10 @@ import sqlalchemy
 from sqlalchemy import orm
 
 from .db_session import SqlAlchemyBase
+from config import db
 
 
-class Publication(SqlAlchemyBase):
+class Publication(db.Model, SqlAlchemyBase):
     __tablename__ = 'publications'
 
     id = sqlalchemy.Column(sqlalchemy.Integer,

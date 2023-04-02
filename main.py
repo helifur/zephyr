@@ -1,33 +1,136 @@
+import datetime
+import os
 from flask import Flask, flash, render_template, redirect, request, make_response
-from flask_login import LoginManager, login_required, login_user, logout_user, current_user
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager, login_required, login_user, logout_user, current_user, UserMixin
 
+import sqlalchemy
 from static.modules.signup import RegisterForm
 from static.modules.auth import LoginForm
 from static.modules.edituser import EditUserForm
 from static.modules.changeuserpass import ChangeUserPass
 from static.modules.users import User
+from config import app, login_manager, db
 from static.modules.publications import Publication
 from static.modules import db_session
 
-# инициализируем приложения
-app = Flask(__name__, template_folder="static/templates")
-app.config['SECRET_KEY'] = 'zephyr_secret_key'
-login_manager = LoginManager()
-login_manager.init_app(app)
 
 # инициализируем базу данных
 db_session.global_init("static/db/data.db")
-# db_sess = db_session.create_session()
+db_sess = db_session.create_session()
 # publ = Publication(content="Всем привет!", user_id=1, is_private=False)
 # db_sess.add(publ)
 # db_sess.commit()
 
 
+# class User(db.Model, UserMixin):
+#     __tablename__ = 'users'
+
+#     id = sqlalchemy.Column(sqlalchemy.Integer,
+#                            primary_key=True, autoincrement=True)
+#     name = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+#     surname = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+#     email = sqlalchemy.Column(sqlalchemy.String,
+#                               index=True, unique=True, nullable=True)
+#     about = sqlalchemy.Column(sqlalchemy.String, default="No bio yet.")
+#     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+#     reg_date = sqlalchemy.Column(sqlalchemy.DateTime,
+#                                  default=datetime.datetime.now)
+
+#     followed = sqlalchemy.orm.relationship('User',
+#                                            secondary=followers,
+#                                            primaryjoin=(
+#                                                followers.c.follower_id == id),
+#                                            secondaryjoin=(
+#                                                followers.c.followed_id == id),
+#                                            backref=sqlalchemy.orm.backref(
+#                                                'followers'),
+#                                            lazy='dynamic')
+
+#     avatar = sqlalchemy.Column(sqlalchemy.LargeBinary, nullable=True)
+
+#     # publications = sqlalchemy.orm.relationship(
+#     #     "Publication", back_populates='user')
+
+#     def set_password(self, password):
+#         self.hashed_password = generate_password_hash(password)
+
+#     def check_password(self, password):
+#         return check_password_hash(self.hashed_password, password)
+
+#     def getAvatar(self, app, id):
+#         db_sess = create_session()
+#         img = None
+#         db_avatar = db_sess.query(User.avatar).filter(User.id == id).first()[0]
+#         db_sess.close()
+#         if type(db_avatar) != bytes:
+#             try:
+#                 with app.open_resource(app.root_path + url_for('static', filename='images/default_avatar.png'), "rb") as f:
+#                     img = f.read()
+#             except FileNotFoundError as e:
+#                 print("Не найден аватар по умолчанию: " + str(e))
+#         else:
+#             img = db_avatar
+
+#         return img
+
+#     def updateUserAvatar(self, avatar, user_id):
+#         db_sess = create_session()
+
+#         if not avatar:
+#             return False
+
+#         db_sess.query(User).filter(
+#             User.id == user_id).update({'avatar': avatar})
+#         db_sess.commit()
+#         db_sess.close()
+#         # # self.__cur.execute(
+#         # #     f"UPDATE users SET avatar = ? WHERE id = ?", (binary, user_id))
+#         # # self.__db.commit()
+
+#         return True
+
+#     def follow(self, user):
+#         if not self.is_following(user):
+#             self.followed.append(user)
+#             db.session.add(self)
+#             db.session.commit()
+#             return True
+
+#     def unfollow(self, user):
+#         if self.is_following(user):
+#             self.followed.remove(user)
+#             return self
+
+#     def is_following(self, user):
+#         db_sess = db_session.create_session()
+#         # stmt = sqlalchemy.select(followers).filter(
+#         #     followers.c.followed_id == user.id).count() > 0
+#         # print(stmt)
+#         # subq = stmt.subquery()
+#         # ans = sqlalchemy.select(subq)
+#         ans = db_sess.query(followers).filter(
+#             followers.c.followed_id == user.id).count() > 0
+#         db_sess.close()
+#         return ans
+
+
+# with app.app_context():
+#     db.create_all()
+#     print("OK")
+
+# user = User(name="Vasya", surname="Poopkin", email="sjmdfi@gmail.com")
+# db.session.add(user)
+# db.session.commit()
 # получение пользователя
+
+
 @login_manager.user_loader
 def load_user(user_id):
     db_sess = db_session.create_session()
-    return db_sess.get(User, user_id)
+    ans = db_sess.get(User, user_id)
+    db_sess.close()
+    return ans
 
 
 # выход из системы
@@ -67,7 +170,7 @@ def userava(id):
 @login_required
 def new_avatar(id):
     if request.method == "POST":
-        db_sess = db_session.create_session()
+        # db_sess = db_session.create_session()
         user = db_sess.query(User).filter(User.id == id).first()
 
         file = request.files['newAvatar']
@@ -84,7 +187,7 @@ def new_avatar(id):
 @app.route('/profile/<int:id>')
 @login_required
 def profile(id):
-    db_sess = db_session.create_session()
+    # db_sess = db_session.create_session()
     personal_data = db_sess.query(
         User.name, User.surname, User.about).filter(User.id == id).one()
     publications = db_sess.query(Publication).filter(Publication.is_private != True,
@@ -103,7 +206,7 @@ def profile(id):
 @app.route('/edit_profile/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_profile(id):
-    db_sess = db_session.create_session()
+    # db_sess = db_session.create_session()
 
     form_useredit = EditUserForm()
 
@@ -125,6 +228,7 @@ def edit_profile(id):
             user.email = form_useredit.email.data
 
         db_sess.commit()
+        # db_sess.close()
         return redirect(f'/profile/{id}')
 
     return render_template("edituser.html", cur_url=request.base_url.split('/')[-2], form_useredit=form_useredit)
@@ -134,7 +238,7 @@ def edit_profile(id):
 @app.route('/change_pass/<int:id>', methods=['GET', 'POST'])
 @login_required
 def ch_pass(id):
-    db_sess = db_session.create_session()
+    # db_sess = db_session.create_session()
 
     form_chpass = ChangeUserPass()
 
@@ -153,6 +257,7 @@ def ch_pass(id):
             user.set_password(form_chpass.new_password.data)
 
             db_sess.commit()
+            # db_sess.close()
             return redirect(f'/profile/{id}')
 
     return render_template("chuserpass.html", cur_url=request.base_url.split('/')[-2], form_chpass=form_chpass)
@@ -161,14 +266,73 @@ def ch_pass(id):
 """============END PROFILE==================="""
 
 
-# друзья
-@app.route('/friends')
-def friends():
-    db_sess = db_session.create_session()
+# список всех пользователей
+@app.route('/members')
+def members():
+    # db_sess = db_session.create_session()
 
     data = db_sess.query(User).all()
 
-    return render_template("friends.html", data=data)
+    return render_template("members.html", data=data)
+
+
+# список всех пользователей
+@app.route('/friends')
+def friends():
+    who_follow_data = current_user.get_who_follow()
+    who_follow_data = [db.session.query(User).filter(User.id == item[1]).first()
+                       for item in who_follow_data]
+
+    followers_data = current_user.get_followers()
+    followers_data = [db.session.query(User).filter(User.id == item[0]).first()
+                      for item in followers_data]
+
+    # вхождение пользователя и в подписки, и в подписчики
+    friends_data = list(set(who_follow_data) & set(followers_data))
+
+    no_subscribes = not bool(set(who_follow_data) - set(friends_data))
+    no_subscribers = not bool(set(followers_data) - set(friends_data))
+
+    return render_template("friends.html",
+                           cur_url=request.base_url.split('/')[-1],
+                           who_follow_data=who_follow_data,
+                           followers_data=followers_data,
+                           friends_data=friends_data,
+                           no_subscribes=no_subscribes,
+                           no_subscribers=no_subscribers
+                           )
+
+
+# добавить в друзья
+@app.route('/add_friend/<int:id>')
+def add_friend(id):
+    # db_sess_1 = db_session.create_session()
+    # filter(User.id == id).
+    user = db.session.query(User).filter(User.id == id).first()
+    print(user)
+    # db_sess.close()
+    g = current_user.follow(user)
+
+    # sqlalchemy.orm.session.add(g)
+    # db_sess_1.commit()
+    # db_sess_1.close()
+    return redirect("/friends")
+
+
+# отписаться
+@app.route('/remove_friend/<int:id>')
+def remove_friend(id):
+    # db_sess_1 = db_session.create_session()
+    # filter(User.id == id).
+    user = db.session.query(User).filter(User.id == id).first()
+    print(user)
+    # db_sess.close()
+    g = current_user.unfollow(user)
+
+    # sqlalchemy.orm.session.add(g)
+    # db_sess_1.commit()
+    # db_sess_1.close()
+    return redirect("/friends")
 
 
 # регистрация
@@ -183,7 +347,7 @@ def register():
                                    form_reg=form_reg,
                                    message="Пароли не совпадают")
 
-        db_sess = db_session.create_session()
+        # db_sess = db_session.create_session()
         if db_sess.query(User).filter(User.email == form_reg.email.data).first():
             return render_template('signup.html', title='Регистрация',
                                    cur_url=request.base_url.split('/')[-1],
@@ -211,9 +375,11 @@ def login():
     form_auth = LoginForm()
 
     if form_auth.validate_on_submit():
-        db_sess = db_session.create_session()
+        # db_sess = db_session.create_session()
         user = db_sess.query(User).filter(
             User.email == form_auth.email.data).first()
+
+        db_sess.close()
 
         if user and user.check_password(form_auth.password.data):
             login_user(user, remember=form_auth.remember_me.data)

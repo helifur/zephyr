@@ -53,7 +53,13 @@ footer {
   display: none;
 }
 
+a.disabled {
+  pointer-events: none;
+  color: #ccc;
+}
+
 .friends-avatar {
   max-width: 150px;
   max-height: 150px;
+  border-radius: 150px;
 }

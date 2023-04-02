@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+<div class="container">
+        {% for item in data %}
+        <div class="mb-5 d-flex align-items-center">
+                <img class="friends-avatar" src="/userava/{{ item.id }}">
+                <div class="ms-3">
+                        <h1 class="ms-1">{{ item.name }} {{ item.surname }}</h1>
+                        <a class="button m-1" href="/profile/{{ item.id }}"><button
+                                        class="btn btn-primary m-1">Посмотреть
+                                        профиль</button></a>
+
+                        {% if current_user.is_following(current_user, item) %}
+                        <a class="button m-1" href="/remove_friend/{{ item.id }}"><button
+                                        class="btn btn-primary m-1">Отписаться</button></a>
+                        {% else %}
+                        {% if item.id == current_user.id %}
+                        <a class="button m-1 disabled" href="/add_friend/{{ item.id }}"><button
+                                        class="btn btn-primary m-1" disabled>Это вы!</button></a>
+                        {% else %}
+                        <a class="button m-1" href="/add_friend/{{ item.id }}"><button
+                                        class="btn btn-primary m-1">Добавить в
+                                        друзья</button></a>
+                        {% endif %}
+
+                        {% endif %}
+                </div>
+        </div>
+        {% endfor %}
+</div>
+
+{% endblock content %}
