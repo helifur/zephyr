@@ -12,8 +12,9 @@
             {{ form_auth.email(class="form-control") }}
         </div>
         {% for error in form_auth.email.errors %}
-        <div class="alert alert-danger mt-2" role="alert">
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
             {{ error }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
         {% endfor %}
     </div>
@@ -24,8 +25,9 @@
             {{ form_auth.password(class="form-control", type="password") }}
         </div>
         {% for error in form_auth.password.errors %}
-        <div class="alert alert-danger mt-2" role="alert">
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
             {{ error }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
         {% endfor %}
     </div>
@@ -37,7 +39,10 @@
     <div class="mb-3">{{ form_auth.submit(type="submit", class="btn btn-info") }}</div>
 
     {% if message %}
-    <div class="alert alert-danger mt-2" role="alert">{{ message }}</div>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
     {% endif %}
 </form>
 

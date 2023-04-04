@@ -1,14 +1,13 @@
-import datetime
-import os
-from flask import Flask, flash, render_template, redirect, request, make_response
-from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager, login_required, login_user, logout_user, current_user, UserMixin
+from flask import render_template, redirect, request, make_response
+from flask_login import login_required, login_user, logout_user, current_user
 
-import sqlalchemy
 from static.modules.signup import RegisterForm
 from static.modules.auth import LoginForm
 from static.modules.edituser import EditUserForm
 from static.modules.changeuserpass import ChangeUserPass
+from static.modules.newpublication import NewPublForm
+from static.modules.editpubl import EditPublForm
+
 from static.modules.users import User
 from config import app, login_manager, db
 from static.modules.publications import Publication
@@ -23,108 +22,7 @@ db_sess = db_session.create_session()
 # db_sess.commit()
 
 
-# class User(db.Model, UserMixin):
-#     __tablename__ = 'users'
-
-#     id = sqlalchemy.Column(sqlalchemy.Integer,
-#                            primary_key=True, autoincrement=True)
-#     name = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-#     surname = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-#     email = sqlalchemy.Column(sqlalchemy.String,
-#                               index=True, unique=True, nullable=True)
-#     about = sqlalchemy.Column(sqlalchemy.String, default="No bio yet.")
-#     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-#     reg_date = sqlalchemy.Column(sqlalchemy.DateTime,
-#                                  default=datetime.datetime.now)
-
-#     followed = sqlalchemy.orm.relationship('User',
-#                                            secondary=followers,
-#                                            primaryjoin=(
-#                                                followers.c.follower_id == id),
-#                                            secondaryjoin=(
-#                                                followers.c.followed_id == id),
-#                                            backref=sqlalchemy.orm.backref(
-#                                                'followers'),
-#                                            lazy='dynamic')
-
-#     avatar = sqlalchemy.Column(sqlalchemy.LargeBinary, nullable=True)
-
-#     # publications = sqlalchemy.orm.relationship(
-#     #     "Publication", back_populates='user')
-
-#     def set_password(self, password):
-#         self.hashed_password = generate_password_hash(password)
-
-#     def check_password(self, password):
-#         return check_password_hash(self.hashed_password, password)
-
-#     def getAvatar(self, app, id):
-#         db_sess = create_session()
-#         img = None
-#         db_avatar = db_sess.query(User.avatar).filter(User.id == id).first()[0]
-#         db_sess.close()
-#         if type(db_avatar) != bytes:
-#             try:
-#                 with app.open_resource(app.root_path + url_for('static', filename='images/default_avatar.png'), "rb") as f:
-#                     img = f.read()
-#             except FileNotFoundError as e:
-#                 print("Не найден аватар по умолчанию: " + str(e))
-#         else:
-#             img = db_avatar
-
-#         return img
-
-#     def updateUserAvatar(self, avatar, user_id):
-#         db_sess = create_session()
-
-#         if not avatar:
-#             return False
-
-#         db_sess.query(User).filter(
-#             User.id == user_id).update({'avatar': avatar})
-#         db_sess.commit()
-#         db_sess.close()
-#         # # self.__cur.execute(
-#         # #     f"UPDATE users SET avatar = ? WHERE id = ?", (binary, user_id))
-#         # # self.__db.commit()
-
-#         return True
-
-#     def follow(self, user):
-#         if not self.is_following(user):
-#             self.followed.append(user)
-#             db.session.add(self)
-#             db.session.commit()
-#             return True
-
-#     def unfollow(self, user):
-#         if self.is_following(user):
-#             self.followed.remove(user)
-#             return self
-
-#     def is_following(self, user):
-#         db_sess = db_session.create_session()
-#         # stmt = sqlalchemy.select(followers).filter(
-#         #     followers.c.followed_id == user.id).count() > 0
-#         # print(stmt)
-#         # subq = stmt.subquery()
-#         # ans = sqlalchemy.select(subq)
-#         ans = db_sess.query(followers).filter(
-#             followers.c.followed_id == user.id).count() > 0
-#         db_sess.close()
-#         return ans
-
-
-# with app.app_context():
-#     db.create_all()
-#     print("OK")
-
-# user = User(name="Vasya", surname="Poopkin", email="sjmdfi@gmail.com")
-# db.session.add(user)
-# db.session.commit()
 # получение пользователя
-
-
 @login_manager.user_loader
 def load_user(user_id):
     db_sess = db_session.create_session()
@@ -184,14 +82,31 @@ def new_avatar(id):
 
 
 # профиль
-@app.route('/profile/<int:id>')
+@app.route('/profile/<int:id>', methods=["GET", "POST"])
 @login_required
 def profile(id):
     # db_sess = db_session.create_session()
     personal_data = db_sess.query(
         User.name, User.surname, User.about).filter(User.id == id).one()
-    publications = db_sess.query(Publication).filter(Publication.is_private != True,
-                                                     Publication.user_id == id)
+
+    if id == current_user.id:
+        publications = db_sess.query(Publication).filter(
+            Publication.user_id == id)
+    else:
+        publications = db_sess.query(Publication).filter(Publication.is_private != True,
+                                                         Publication.user_id == id)
+
+    likes = request.cookies.get("likes", [])
+
+    # если лайки это пустая строка, то делаем из нее пустой список
+    # иначе будет ошибка TypeError
+    if not likes:
+        likes = []
+
+    else:
+        likes = [int(item) for item in likes.split(' ')]
+
+    print(likes)
 
     return render_template("profile.html",
                            cur_url=request.base_url.split('/')[-2],
@@ -199,7 +114,48 @@ def profile(id):
                            publications=publications,
                            name=personal_data[0],
                            surname=personal_data[1],
-                           about=personal_data[2])
+                           about=personal_data[2],
+                           likes=likes)
+
+
+# поставить лайк
+@app.route('/profile/make_like/<int:publ_id>/<int:user_id>')
+def make_like(publ_id, user_id):
+    likes = request.cookies.get("likes", 0)
+    referrer = request.referrer.split('/')
+    referrer = '/'.join(referrer[3:])
+
+    if likes:
+        likes = [item for item in likes.split(' ')]
+        print(likes)
+
+        if str(publ_id) in likes:
+            likes.remove(str(publ_id))
+            db.session.query(Publication).filter(Publication.id == publ_id).update(
+                {'likes_amount': Publication.likes_amount - 1})
+            db.session.commit()
+            res = make_response(redirect(f'/{referrer}'))
+            res.set_cookie("likes", ' '.join(likes),
+                           max_age=60 * 60 * 24 * 365 * 2)
+
+        else:
+            likes.append(str(publ_id))
+            db.session.query(Publication).filter(Publication.id == publ_id).update(
+                {'likes_amount': Publication.likes_amount + 1})
+            db.session.commit()
+            res = make_response(redirect(f'/{referrer}'))
+            res.set_cookie("likes", ' '.join(likes),
+                           max_age=60 * 60 * 24 * 365 * 2)
+
+    else:
+        res = make_response(redirect(f'/{referrer}'))
+        db.session.query(Publication).filter(Publication.id == publ_id).update(
+            {'likes_amount': Publication.likes_amount + 1})
+        db.session.commit()
+        res.set_cookie("likes", f'{publ_id}',
+                       max_age=60 * 60 * 24 * 365 * 2)
+
+    return res
 
 
 # редактирование профиля
@@ -226,6 +182,7 @@ def edit_profile(id):
             user.name = form_useredit.name.data
             user.surname = form_useredit.surname.data
             user.email = form_useredit.email.data
+            user.about = form_useredit.about.data
 
         db_sess.commit()
         # db_sess.close()
@@ -335,6 +292,79 @@ def remove_friend(id):
     return redirect("/friends")
 
 
+"""============PUBLICATIONS========="""
+
+
+# добавить публикации
+@app.route('/new_publication/<int:id>', methods=["GET", "POST"])
+def new_publication(id):
+    form_publ = NewPublForm()
+
+    if form_publ.validate_on_submit():
+        publ = Publication(content=form_publ.content.data,
+                           is_private=form_publ.is_private.data,
+                           user_id=current_user.id)
+
+        db.session.add(publ)
+        db.session.commit()
+
+        return redirect(f"/profile/{current_user.id}")
+
+    return render_template("newpubl.html", form_publ=form_publ)
+
+
+# изменить публикацию
+@app.route('/edit_publication/<int:id>', methods=["GET", "POST"])
+def edit_publication(id):
+    form_edit_publ = EditPublForm()
+    referrer = request.referrer.split('/')
+    referrer = '/'.join(referrer[3:])
+
+    publ = db.session.query(Publication).filter(Publication.id == id,
+                                                Publication.user_id == current_user.id).first()
+
+    form_edit_publ.content.data = publ.content
+
+    # защита от дурака, если человек вручную впишет адрес в строку браузера
+    # у него не получится изменить чужую публикацию
+    if publ:
+        if form_edit_publ.validate_on_submit():
+            db.session.query(Publication).filter(Publication.id == id,
+                                                 Publication.user_id == current_user.id).update({"content": form_edit_publ.content.data,
+                                                                                                "is_private": form_edit_publ.is_private.data,
+                                                                                                 "edited_date": None})
+            db.session.commit()
+
+            return redirect(f"/profile/{current_user.id}")
+
+        return render_template("editpubl.html", form_edit_publ=form_edit_publ, publ=publ)
+
+    else:
+        return redirect(f'/{referrer}')
+
+
+# удалить публикацию
+@app.route('/delete_publication/<int:id>', methods=["GET", "POST"])
+def delete_publication(id):
+    referrer = request.referrer.split('/')
+    referrer = '/'.join(referrer[3:])
+
+    publ = db.session.query(Publication).filter(Publication.id == id,
+                                                Publication.user_id == current_user.id).first()
+
+    # защита от дурака, если человек вручную впишет адрес в строку браузера
+    # у него не получится изменить чужую публикацию
+    if publ:
+        db.session.query(Publication).filter(Publication.id == id,
+                                             Publication.user_id == current_user.id).delete()
+        db.session.commit()
+
+        return redirect(f"/profile/{current_user.id}")
+
+    else:
+        return redirect(f'/{referrer}')
+
+
 # регистрация
 @app.route('/signup', methods=['GET', 'POST'])
 def register():
@@ -394,4 +424,4 @@ def login():
 
 
 if __name__ == '__main__':
-    app.run(port=8080, host='127.0.0.1', debug=True)
+    app.run(port=8080, host='localhost', debug=True)

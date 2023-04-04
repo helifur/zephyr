@@ -7,4 +7,5 @@ class EditUserForm(FlaskForm):
     name = StringField('Имя', validators=[DataRequired()])
     surname = StringField('Фамилия', validators=[DataRequired()])
     email = EmailField('Адрес эл. почты', validators=[DataRequired()])
+    about = StringField('О себе')
     submit = SubmitField('Подтвердить')

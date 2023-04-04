@@ -63,3 +63,15 @@ a.disabled {
   max-height: 150px;
   border-radius: 150px;
 }
+
+.publ-content {
+  font-size: 25px;
+}
+
+.publ-sub {
+  font-size: 17px;
+}
+
+.doing-group {
+  overflow: auto;
+}
