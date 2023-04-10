@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5 mb-4">
+    <h1>Chat room</h1>
+</div>
+<div class="container my-5">
+    <div class="row">
+        <div class="col-5">
+            {% if user.name is not none %}<h2>Hello, {{ user.name }}</h2>{% endif %}
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="messages d-flex flex-column" id="messages"></div>
+    <div class="row">
+        <div class="col-7">
+            <form id="form_send_msg" autocomplete="off" novalidate>
+                <div class="form-group mt-4">
+                    <label for="message_input">Message:</label>
+                    <input type="text" class="form-control" id="message_input" maxlength="50" />
+                </div>
+                <button type="submit" id="send_msg" class="mt-2 btn btn-success">Send</button>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.4.js" integrity="sha256-a9jBBRygX1Bh5lt8GZjXDzyOB+bWve9EiO7tROUtj/E="
+    crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"
+    integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA=="
+    crossorigin="anonymous"></script>
+
+<script type="text/javascript" src="/static/js/chatwuser.js" charset="utf-8"></script>
+<script type="text/javascript" charset="utf-8">
+    var data = myFunc({{ data | tojson }});
+    var cur_user_id = myFunc({{ user.id }});
+    var cur_chat_id = myFunc({{ cur_chat.id }});
+</script>
+{% endblock content %}

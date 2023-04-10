@@ -27,6 +27,9 @@
         <div class="container">
             <h1>{{ name }} {{ surname }}</h1>
             <p>{{ about }}</p>
+            {% if id != current_user.id %}
+            <a class="btn btn-success" href="/new_chat/{{ id }}">Создать чат</a>
+            {% endif %}
         </div>
     </div>
 

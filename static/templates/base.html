@@ -46,10 +46,10 @@
               <a class="nav-link" aria-current="page" href="/profile/{{ current_user.id }}">Профиль</a>
               {% endif %}
 
-              {% if cur_url == 'messages' %}
-              <a class="nav-link active" href="/messages">Сообщения</a>
+              {% if cur_url == 'chats' %}
+              <a class="nav-link active" href="/chats">Чаты</a>
               {% else %}
-              <a class="nav-link" href="/messages">Сообщения</a>
+              <a class="nav-link" href="/chats">Чаты</a>
               {% endif %}
 
               {% if 'friends' in cur_url %}
@@ -98,7 +98,7 @@
         </li>
 
         <li class="nav-item">
-          <a href="/messages" class="nav-link px-2 text-muted">Сообщения</a>
+          <a href="/chats" class="nav-link px-2 text-muted">Чаты</a>
         </li>
 
         <li class="nav-item">

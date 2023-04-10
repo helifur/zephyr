@@ -75,3 +75,27 @@ a.disabled {
 .doing-group {
   overflow: auto;
 }
+
+.chat-image {
+  max-width: 100px;
+  max-height: 100px;
+}
+
+.new_chat {
+  visibility: hidden;
+}
+
+.message_curuser {
+  justify-content: end;
+}
+
+.messages {
+  max-width: 600px;
+}
+
+.message_date {
+  font-size: 10px;
+  margin-left: 15px;
+  display: flex;
+  justify-content: end;
+}
