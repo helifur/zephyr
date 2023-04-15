@@ -2,12 +2,11 @@
 
 {% block content %}
 
-<h1>Профиль</h1>
+<h1 class="main-header mt-3">Профиль</h1>
 
-
-<div class="container">
+<div class="container mt-3">
     {% if id == current_user.id %}
-    <div class="d-flex justify-content-end">
+    <div class="d-flex justify-content-end mb-2">
         <div class="doing-group btn-group">
             <a class="btn btn-warning me-1 d-flex align-items-center"
                 href="/new_publication/{{ current_user.id }}">Новая публикация</a>
@@ -20,15 +19,20 @@
     </div>
     {% endif %}
 
-
-    <div class="container d-flex align-items-center">
+    <div class="container d-flex align-items-center mb-4">
         <img class="avatar" src="/userava/{{ id }}">
 
         <div class="container">
-            <h1>{{ name }} {{ surname }}</h1>
-            <p>{{ about }}</p>
-            {% if id != current_user.id %}
+            <div style="max-width: fit-content;" class="">
+                <h1>{{ name }} {{ surname }}</h1>
+                <p class="text-break">{{ about }}</p>
+            </div>
+            {% if id != current_user.id and not create_chat %}
             <a class="btn btn-success" href="/new_chat/{{ id }}">Создать чат</a>
+            {% else %}
+            {% if create_chat %}
+            <a class="btn btn-primary" href="/chat/{{ create_chat.id }}">Перейти в чат</a>
+            {% endif %}
             {% endif %}
         </div>
     </div>
@@ -38,11 +42,12 @@
 
         {% for item in publications %}
         <div class="col-md6 p-2 border rounded mb-2">
-            <div class="publ-content mb-1">
-                {{ item.content }}
-                {% if item.is_private %}
-                <span class="badge bg-secondary">Приватный</span>
-                {% endif %}
+            <div style="max-width: fit-content;" class="publ-content mb-1">
+                <p class="m-0 text-break">{{ item.content }}
+                    {% if item.is_private %}
+                    <span class="badge bg-secondary">Приватный</span>
+                    {% endif %}
+                </p>
             </div>
 
             <div class="publ-sub border-top pt-1">
@@ -50,14 +55,14 @@
             </div>
 
             <div class="publ-sub border-top mt-2 pt-2">
-                <a class="button me-2" href="/profile/make_like/{{ item.id }}/{{ current_user.id }}">
+                <a class="button me-2" href="/profile/make_like/{{ item.id }}">
                     {% if item.id in likes %}
                     <button class="btn btn-danger">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                             class="bi bi-heart-fill" viewBox="0 0 16 16" data-darkreader-inline-fill=""
                             style="--darkreader-inline-fill:currentColor;">
                             <path fill-rule="evenodd"
-                                d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"></path>
+                                d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z" />
                         </svg>
                         {{ item.likes_amount }}
                     </button>
@@ -67,12 +72,11 @@
                             class="bi bi-heart-fill" viewBox="0 0 16 16" data-darkreader-inline-fill=""
                             style="--darkreader-inline-fill:currentColor;">
                             <path fill-rule="evenodd"
-                                d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"></path>
+                                d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z" />
                         </svg>
                         {{ item.likes_amount }}
                     </button>
                     {% endif %}
-
                 </a>
             </div>
 
@@ -87,8 +91,8 @@
 
         {% for item in publications %}
         <div class="col-md6 p-2 border rounded mb-2">
-            <div class="publ-content mb-1">
-                {{ item.content }}
+            <div style="max-width: fit-content;" class="publ-content mb-1">
+                <p class="m-0 text-break">{{ item.content }}</p>
             </div>
 
             <div class="publ-sub border-top pt-1">
@@ -96,14 +100,14 @@
             </div>
 
             <div class="publ-sub border-top mt-2 pt-2">
-                <a class="button me-2" href="/profile/make_like/{{ item.id }}/{{ current_user.id }}">
+                <a class="button me-2" href="/profile/make_like/{{ item.id }}">
                     {% if item.id in likes %}
                     <button class="btn btn-danger">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                             class="bi bi-heart-fill" viewBox="0 0 16 16" data-darkreader-inline-fill=""
                             style="--darkreader-inline-fill:currentColor;">
                             <path fill-rule="evenodd"
-                                d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"></path>
+                                d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z" />
                         </svg>
                         {{ item.likes_amount }}
                     </button>
@@ -113,7 +117,7 @@
                             class="bi bi-heart-fill" viewBox="0 0 16 16" data-darkreader-inline-fill=""
                             style="--darkreader-inline-fill:currentColor;">
                             <path fill-rule="evenodd"
-                                d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"></path>
+                                d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z" />
                         </svg>
                         {{ item.likes_amount }}
                     </button>
@@ -124,13 +128,6 @@
         {% endfor %}
 
         {% endif %}
-
-
-
     </div>
 </div>
-
-
-
-
 {% endblock content %}

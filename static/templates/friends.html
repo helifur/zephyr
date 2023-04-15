@@ -3,14 +3,14 @@
 {% block content %}
 
 <div class="mt-3">
-    <a class="button m-1" href="/members"><button class="btn btn-success m-1">Найти людей</button></a>
+    <a class="shadow-lg button m-1" href="/members"><button class="btn btn-success m-1">Найти людей</button></a>
 
     <!-- friends -->
-    <h1 class="mt-3">Друзья</h1>
+    <h1 class="main-header mt-3">Друзья</h1>
 
     <div class="container mt-3">
         {% if not friends_data %}
-        <h4>У вас нет друзей!</h4>
+        <h4 class="fw-normal">У вас нет друзей!</h4>
         {% endif %}
 
         {% for item in friends_data %}
@@ -21,7 +21,7 @@
                 <a class="button m-1" href="/profile/{{ item.id }}"><button class="btn btn-primary m-1">Посмотреть
                         профиль</button></a>
 
-                <a class="button m-1" href="/remove_friend/{{ item.id }}"><button class="btn btn-primary m-1">Удалить из
+                <a class="button m-1" href="/unfollow/{{ item.id }}"><button class="btn btn-primary m-1">Удалить из
                         друзей</button></a>
             </div>
         </div>
@@ -29,11 +29,11 @@
     </div>
 
     <!-- who following -->
-    <h1 class="mt-3">Подписки</h1>
+    <h1 class="main-header mt-3">Подписки</h1>
 
     <div class="container mt-3">
         {% if not who_follow_data or no_subscribes %}
-        <h4>Вы ни на кого не подписались!</h4>
+        <h4 class="fw-normal">Вы ни на кого не подписались!</h4>
         {% endif %}
 
         {% for item in who_follow_data %}
@@ -45,7 +45,7 @@
                 <a class="button m-1" href="/profile/{{ item.id }}"><button class="btn btn-primary m-1">Посмотреть
                         профиль</button></a>
 
-                <a class="button m-1" href="/remove_friend/{{ item.id }}"><button
+                <a class="button m-1" href="/unfollow/{{ item.id }}"><button
                         class="btn btn-primary m-1">Отписаться</button></a>
             </div>
 
@@ -55,11 +55,11 @@
     </div>
 
     <!-- followers -->
-    <h1 class="mt-3">Подписчики</h1>
+    <h1 class="main-header mt-3">Подписчики</h1>
 
     <div class="container mt-3">
         {% if not followers_data or no_subscribers %}
-        <h4>На вас никто не подписался!</h4>
+        <h4 class="fw-normal">На вас никто не подписался!</h4>
         {% endif %}
 
         {% for item in followers_data %}

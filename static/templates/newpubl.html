@@ -9,7 +9,7 @@
     <div class="mb-3">
         <div class="input-group">
             <span class="input-group-text">{{ form_publ.content.label }}</span>
-            {{ form_publ.content(class="form-control") }}
+            {{ form_publ.content(class="form-control", maxlength="150") }}
         </div>
 
         {% for error in form_publ.content.errors %}

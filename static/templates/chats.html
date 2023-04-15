@@ -3,7 +3,7 @@
 {% block content %}
 
 <div class="d-flex m-4">
-    <h1 class="me-3">Чаты с вами</h1>
+    <h1 class="main-header me-3">Чаты с вами</h1>
     <button id="update_chats" type="button" class="btn btn-secondary">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise"
             viewBox="0 0 16 16" data-darkreader-inline-fill="" style="--darkreader-inline-fill:currentColor;">
@@ -15,19 +15,20 @@
     </button>
 </div>
 
-
 <div class="container">
     <div class="mb-3">
+        {% if not chats %}
+        <div class="container mt-4">
+            <h4 class="fw-normal mb-3">У вас нет чатов!</h4>
+            <a href="/members" class="btn btn-dark">Создать новый</a>
+        </div>
+        {% else %}
+        {% endif %}
         {% for item in chats %}
         <div class="mb-5 d-flex align-items-center">
-            <img class="chat-image" src="/static/images/chat_default.png">
+            <img class="chat-image" src="{{ url_for('static', filename='images/chat_default.png') }}">
 
             <div class="ms-3">
-                <!-- {% if item.is_unread %}
-                <h1 class="ms-1">{{ item.name }} <span class="badge rounded-pill text-bg-danger">Новое</span></h1>
-                {% else %}
-                <h1 class="ms-1">{{ item.name }}</h1>
-                {% endif %} -->
                 {% if item[0].id in unread.keys() %}
                 <h1 class="ms-1" id="chat_head_{{ item[0].id }}">{{ item[1] }} <span
                         class="badge rounded-pill text-bg-danger">Новое</span></h1>
@@ -35,9 +36,6 @@
                 <h1 class="ms-1" id="chat_head_{{ item[0].id }}">{{ item[1] }}</h1>
                 {% endif %}
 
-                <!-- <div class="new_chat">
-                    <
-                </div> -->
                 <a class="btn btn-primary" href="chat/{{ item[0].id }}">Просмотреть</a>
             </div>
         </div>
@@ -47,52 +45,7 @@
 
 <script src="https://code.jquery.com/jquery-3.6.4.js" integrity="sha256-a9jBBRygX1Bh5lt8GZjXDzyOB+bWve9EiO7tROUtj/E="
     crossorigin="anonymous"></script>
-<script>
-    $('document').ready(function () {
-        $('#update_chats').click(fetchChats)
 
-        function fetchChats() {
-            // URL на который будем отправлять GET запрос
-            const requestURL = '/api/check_chats';
-            const xhr = new XMLHttpRequest();
-            xhr.open('GET', requestURL);
-            xhr.onload = () => {
-                if (xhr.status !== 200) {
-                    return;
-                }
-
-                var data = JSON.parse(xhr.response);
-                /* var data = xhr.response.split(';');
-                var data_dict = new Object();
-
-                for (let index = 0; index < data.length; index++) {
-                    let tmp = data[index].split(',')
-                    data_dict[tmp[1]] = tmp[0];
-                } */
-
-                console.log(data);
-
-                if (xhr.response.length > 0) {
-                    for (let key of Object.keys(data)) {
-                        console.log(key);
-                        if ($('#chat_head_1').text().includes('Новое')) {
-                            //pass
-                        } else {
-                            $('#chat_head_' + key).html(data[key] + '<span class="badge rounded-pill text-bg-danger">Новое</span>');
-                        }
-
-                    }
-                }
-
-
-            }
-            xhr.send();
-
-        }
-    });
-
-
-
-</script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/chats.js') }}" charset="utf-8"></script>
 
 {% endblock content %}

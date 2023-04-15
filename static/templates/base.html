@@ -46,7 +46,7 @@
               <a class="nav-link" aria-current="page" href="/profile/{{ current_user.id }}">Профиль</a>
               {% endif %}
 
-              {% if cur_url == 'chats' %}
+              {% if 'chat' in cur_url %}
               <a class="nav-link active" href="/chats">Чаты</a>
               {% else %}
               <a class="nav-link" href="/chats">Чаты</a>

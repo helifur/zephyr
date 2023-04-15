@@ -1,9 +1,10 @@
-from flask import url_for
-from config import db
-
-from flask_login import UserMixin
-from werkzeug.security import generate_password_hash, check_password_hash
 import datetime
+from flask import url_for
+from flask_login import UserMixin
+
+from werkzeug.security import generate_password_hash, check_password_hash
+
+from config import db
 
 followers = db.Table('followers',
                      db.metadata,
@@ -15,6 +16,8 @@ followers = db.Table('followers',
 
 
 class User(db.Model, UserMixin):
+    """Class representing the user"""
+
     __tablename__ = 'users'
 
     id = db.Column(db.Integer,
@@ -46,62 +49,151 @@ class User(db.Model, UserMixin):
     author_id = db.relationship("ChatMessages")
 
     def set_password(self, password):
+        """Set password to current user
+
+        Args:
+            password (str): new password
+        """
+
+        # generate password hash and set it to current user
         self.hashed_password = generate_password_hash(password)
 
     def check_password(self, password):
+        """Checks whether the transmitted password matches the current one
+
+        Args:
+            password (str): password to be verified
+
+        Returns:
+            bool
+        """
         return check_password_hash(self.hashed_password, password)
 
     def getAvatar(self, app, id):
+        """Allows to get avatar of user with id
+            equals to id argument
+
+        Args:
+            app (flask app): current flask app
+            id (int): user id
+
+        Returns:
+            bytes: user avatar
+        """
+
+        # necessary avatar
         img = None
+        # get avatar from db
         db_avatar = db.session.query(
             User.avatar).filter(User.id == id).first()[0]
-        if type(db_avatar) != bytes:
+
+        # if avatar was not set
+        if not isinstance(db_avatar, bytes):
+            # set this user default avatar
             try:
-                with app.open_resource(app.root_path + url_for('static', filename='images/default_avatar.png'), "rb") as f:
+                with app.open_resource(app.root_path +
+                                       url_for('static', filename='images/default_avatar.png'), "rb") as f:
                     img = f.read()
             except FileNotFoundError as e:
-                print("Не найден аватар по умолчанию: " + str(e))
+                print("Default avatar not found: " + str(e))
+        # if avatar was set
         else:
+            # set avatar from db
             img = db_avatar
 
         return img
 
     def updateUserAvatar(self, avatar, user_id):
+        """Allows to update user avatar
+
+        Args:
+            avatar (PIL IMAGE): future avatar
+            user_id (int): user id
+
+        Returns:
+            bool: success or error
+        """
+
+        # if avatar is incorrect
         if not avatar:
             return False
 
+        # update avatar in db
         db.session.query(User).filter(
             User.id == user_id).update({'avatar': avatar})
+        # commit changes
         db.session.commit()
 
         return True
 
     def follow(self, user):
-        if not self.is_following(self, user):
+        """Allows to follow user
+
+        Args:
+            user (User): user
+
+        Returns:
+            bool
+        """
+
+        # if current user not following user
+        if not self.is_following(user):
+            # add user to db followed column
             self.followed.append(user)
             db.session.add(self)
             db.session.commit()
             return True
 
     def unfollow(self, user):
-        if self.is_following(self, user):
+        """Allows to unfollow user
+
+        Args:
+            user (User): user
+
+        Returns:
+            bool
+        """
+
+        # if its possible to unfollow user
+        if self.is_following(user):
+            # remove user from db followed column
             self.followed.remove(user)
             db.session.add(self)
             db.session.commit()
             return True
 
-    def is_following(self, cur_user, user):
+    def is_following(self, user):
+        """Checks is the current user following to user arg
+
+        Args:
+            user (User): another user
+        """
+
+        # check if the id of the current user is in the follower column
+        # and if there is an id of another user in the followed column
         ans = db.session.query(followers).filter(
-            followers.c.follower_id == cur_user.id, followers.c.followed_id == user.id).count()
+            followers.c.follower_id == self.id, followers.c.followed_id == user.id).count()
 
         return ans
 
     def get_who_follow(self):
+        """Get list of users followed by current user
+
+        Returns:
+            list: list of users
+        """
+
         data = db.session.query(followers).filter(
             followers.c.follower_id == self.id).all()
         return data
 
     def get_followers(self):
+        """Get list of users who follow current user
+
+        Returns:
+            list: list of users
+        """
+
         data = db.session.query(followers).filter(
             followers.c.followed_id == self.id).all()
         return data
