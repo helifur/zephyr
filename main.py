@@ -942,4 +942,4 @@ if __name__ == '__main__':
     app.register_blueprint(blueprint)
 
     # run the app
-    socketio.run(app)
+    socketio.run(app, allow_unsafe_werkzeug=True)
