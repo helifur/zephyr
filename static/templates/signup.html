@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1 class="main-header mt-3">Регистрация</h1>
+<form class="mt-3" action="" method="post">
+    {{ form_reg.hidden_tag() }}
+    <div class="mb-3">
+        <div class="input-group">
+            <span class="input-group-text">{{ form_reg.name.label }}&nbsp;и&nbsp;{{ form_reg.surname.label }}</span>
+            {{ form_reg.name(class="form-control") }}
+            {{ form_reg.surname(class="form-control") }}
+        </div>
+
+        {% for error in form_reg.name.errors %}
+        <div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">
+            {{ error }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+
+        {% for error in form_reg.surname.errors %}
+        <div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">
+            {{ error }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="mb-3">
+        <div class="input-group flex-nowrap">
+            <span class="input-group-text" id="addon-wrapping">{{ form_reg.email.label }}</span>
+            {{ form_reg.email(type="email", class="form-control") }}
+        </div>
+        {% for error in form_reg.email.errors %}
+        <div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">
+            {{ error }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="mb-3">
+        <div class="input-group flex-nowrap">
+            <span class="input-group-text" id="addon-wrapping">{{ form_reg.password.label }}</span>
+            {{ form_reg.password(class="form-control", type="password") }}
+        </div>
+        {% for error in form_reg.password.errors %}
+        <div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">
+            {{ error }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="mb-3">
+        <div class="input-group flex-nowrap">
+            <span class="input-group-text" id="addon-wrapping">{{ form_reg.password_repeat.label }}</span>
+            {{ form_reg.password_repeat(class="form-control", type="password") }}
+        </div>
+        {% for error in form_reg.password_repeat.errors %}
+        <div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">
+            {{ error }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="mb-3">{{ form_reg.submit(type="submit", class="btn btn-info") }}</div>
+
+    {% if message %}
+    <div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+</form>
+
+
+
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1 class="main-header mt-3">Главная</h1>
+
+<div class="container mt-4 mb-4">
+    <h3 class="mb-5 text-center">
+        <span class="shadow-sm p-3 rounded fw-normal">Недавние публикации</span>
+    </h3>
+    {% if not data %}
+    <h4 class="fw-normal text-center">Публикаций пока нет!</h4>
+    {% else %}
+
+    <div class="mt-4 container d-flex flex-column align-items-center">
+        {% for item in data %}
+        <div class="col-md6 p-2 border rounded mb-2">
+            <div style="max-width: fit-content;" class="publ-content mb-1">
+                <p class="m-0 text-break">{{ item.content }}</p>
+            </div>
+
+            <div class="publ-sub border-top pt-1">
+                Автор - {{ item.user.name }}, Дата написания - {{ item.created_date }}
+            </div>
+
+            <div class="publ-sub border-top mt-2 pt-2">
+                <a class="button me-2" href="/profile/make_like/{{ item.id }}">
+                    {% if item.id in likes %}
+                    <button class="btn btn-danger">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                            class="bi bi-heart-fill" viewBox="0 0 16 16" data-darkreader-inline-fill=""
+                            style="--darkreader-inline-fill:currentColor;">
+                            <path fill-rule="evenodd"
+                                d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z" />
+                        </svg>
+                        {{ item.likes_amount }}
+                    </button>
+                    {% else %}
+                    <button class="btn btn-outline-danger">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                            class="bi bi-heart-fill" viewBox="0 0 16 16" data-darkreader-inline-fill=""
+                            style="--darkreader-inline-fill:currentColor;">
+                            <path fill-rule="evenodd"
+                                d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z" />
+                        </svg>
+                        {{ item.likes_amount }}
+                    </button>
+                    {% endif %}
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+</div>
+
+{% endblock content %}

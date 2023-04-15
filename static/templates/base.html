@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+    crossorigin="anonymous"></script>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous" />
+  <link href="/static/css/style.css" rel="stylesheet" />
+  <title>{{ title }}</title>
+</head>
+
+<body>
+  <header>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+      <div class="container-fluid navbar-content">
+        <a class="navbar-brand brand" href="/">
+          <img src="/static/images/logo.png" alt="Logo" width="60" height="54" class="d-inline-block align-text-top" />
+          Zephyr
+        </a>
+
+        <div class="d-flex justify-content-end">
+          <button class="navbar-toggler m-2" type="button" data-bs-toggle="collapse"
+            data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false"
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+              {% if not cur_url %}
+              <a class="nav-link active" aria-current="page" href="/">Главная</a>
+              {% else %}
+              <a class="nav-link" aria-current="page" href="/">Главная</a>
+              {% endif %}
+
+              {% if current_user.is_authenticated %}
+
+              {% if 'profile' in cur_url or 'change' in cur_url %}
+              <a class="nav-link active" aria-current="page" href="/profile/{{ current_user.id }}">Профиль</a>
+              {% else %}
+              <a class="nav-link" aria-current="page" href="/profile/{{ current_user.id }}">Профиль</a>
+              {% endif %}
+
+              {% if 'chat' in cur_url %}
+              <a class="nav-link active" href="/chats">Чаты</a>
+              {% else %}
+              <a class="nav-link" href="/chats">Чаты</a>
+              {% endif %}
+
+              {% if 'friends' in cur_url %}
+              <a class="nav-link active" href="/friends">Друзья</a>
+              {% else %}
+              <a class="nav-link" href="/friends">Друзья</a>
+              {% endif %}
+
+              {% else %}
+
+              {% if cur_url == 'auth' %}
+              <a class="nav-link active" href="/auth">Войти</a>
+              {% else %}
+              <a class="nav-link" href="/auth">Войти</a>
+              {% endif %}
+
+              {% if cur_url == 'signup' %}
+              <a class="nav-link active" href="/signup">Зарегистрироваться</a>
+              {% else %}
+              <a class="nav-link" href="/signup">Зарегистрироваться</a>
+              {% endif %}
+
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Begin page content -->
+  <main role="main" class="container">{% block content %}{% endblock %}</main>
+
+  <!-- footer -->
+  <div class="container">
+    <footer class="" role="contentinfo">
+      <ul class="nav justify-content-center border-bottom pb-3 mb-3">
+        <li class="nav-item">
+          <a href="/" class="nav-link px-2 text-muted">Главная</a>
+        </li>
+
+        {% if current_user.is_authenticated %}
+
+        <li class="nav-item">
+          <a href="/profile/{{ current_user.id }}" class="nav-link px-2 text-muted">Профиль</a>
+        </li>
+
+        <li class="nav-item">
+          <a href="/chats" class="nav-link px-2 text-muted">Чаты</a>
+        </li>
+
+        <li class="nav-item">
+          <a href="/friends" class="nav-link px-2 text-muted">Друзья</a>
+        </li>
+
+        {% else %}
+        <li class="nav-item">
+          <a href="/auth" class="nav-link px-2 text-muted">Войти</a>
+        </li>
+
+        <li class="nav-item">
+          <a href="/signup" class="nav-link px-2 text-muted">Зарегистрироваться</a>
+        </li>
+
+        {% endif %}
+      </ul>
+      <p class="text-center text-muted">© 2023 Zephyr</p>
+    </footer>
+  </div>
+</body>
+
+</html>

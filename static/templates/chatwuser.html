@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div style="max-width: 950px; margin-bottom: 150px;" class="container">
+
+    <div class="container p-2 mt-5 d-flex justify-content-center border border-bottom-0 rounded-top-2">
+        <a href="/profile/{{ companion.id }}"><img class="chat-avatar me-2 align-self-center"
+                src="/userava/{{ companion.id }}" alt="Avatar"></a>
+        <div class="align-self-center fs-3">{{ companion.name }} {{ companion.surname }}</div>
+    </div>
+    <div class="messages d-flex flex-column border border-bottom-0 p-4" id="messages"></div>
+    <div class="bg-body-tertiary border rounded-bottom-2 p-3" id="msg_input">
+        <form class="d-flex align-items-center" id="form_send_msg" autocomplete="off" novalidate>
+            <div class="form-group flex-grow-1">
+                <input type="text" class="form-control" id="message_input" maxlength="150"
+                    placeholder="Введите сообщение" />
+            </div>
+            <button type="submit" id="send_msg" class="btn btn-success ms-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-send"
+                    viewBox="0 0 16 16">
+                    <path
+                        d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576 6.636 10.07Zm6.787-8.201L1.591 6.602l4.339 2.76 7.494-7.493Z" />
+                </svg>
+            </button>
+        </form>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.4.js" integrity="sha256-a9jBBRygX1Bh5lt8GZjXDzyOB+bWve9EiO7tROUtj/E="
+    crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"
+    integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA=="
+    crossorigin="anonymous"></script>
+
+<script type="text/javascript" src="/static/js/chatwuser.js" charset="utf-8"></script>
+<script type="text/javascript" charset="utf-8">
+    var data = myFunc({{ data | tojson }});
+    var cur_user_id = myFunc({{ user.id }});
+    var cur_chat_id = myFunc({{ cur_chat.id }});
+</script>
+{% endblock content %}

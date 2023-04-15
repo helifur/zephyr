@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="d-flex m-4">
+    <h1 class="main-header me-3">Чаты с вами</h1>
+    <button id="update_chats" type="button" class="btn btn-secondary">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise"
+            viewBox="0 0 16 16" data-darkreader-inline-fill="" style="--darkreader-inline-fill:currentColor;">
+            <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"></path>
+            <path
+                d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z">
+            </path>
+        </svg>
+    </button>
+</div>
+
+<div class="container">
+    <div class="mb-3">
+        {% if not chats %}
+        <div class="container mt-4">
+            <h4 class="fw-normal mb-3">У вас нет чатов!</h4>
+            <a href="/members" class="btn btn-dark">Создать новый</a>
+        </div>
+        {% else %}
+        {% endif %}
+        {% for item in chats %}
+        <div class="mb-5 d-flex align-items-center">
+            <img class="chat-image" src="{{ url_for('static', filename='images/chat_default.png') }}">
+
+            <div class="ms-3">
+                {% if item[0].id in unread.keys() %}
+                <h1 class="ms-1" id="chat_head_{{ item[0].id }}">{{ item[1] }} <span
+                        class="badge rounded-pill text-bg-danger">Новое</span></h1>
+                {% else %}
+                <h1 class="ms-1" id="chat_head_{{ item[0].id }}">{{ item[1] }}</h1>
+                {% endif %}
+
+                <a class="btn btn-primary" href="chat/{{ item[0].id }}">Просмотреть</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.4.js" integrity="sha256-a9jBBRygX1Bh5lt8GZjXDzyOB+bWve9EiO7tROUtj/E="
+    crossorigin="anonymous"></script>
+
+<script type="text/javascript" src="{{ url_for('static', filename='js/chats.js') }}" charset="utf-8"></script>
+
+{% endblock content %}

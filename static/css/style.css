@@ -1,0 +1,101 @@
+.brand {
+  display: flex;
+  align-items: center;
+  font-size: 28px;
+}
+
+.navbar-content {
+  font-size: 22px;
+}
+
+a {
+  text-decoration: none
+}
+
+body {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  /* Чтобы занимал оставшееся пространство */
+  flex-grow: 1;
+}
+
+footer {
+  /* Чтобы footer не уменьшался */
+  flex-shrink: 0;
+}
+
+.main-header {
+  font-size: 43px;
+  font-family: monospace;
+}
+
+.avatar {
+  min-width: 100px;
+  min-height: 100px;
+  max-width: 220px;
+  max-height: 220px;
+  border-radius: 130px;
+  margin: 15px;
+}
+
+.name {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+a.disabled {
+  pointer-events: none;
+  color: #ccc;
+}
+
+.friends-avatar {
+  max-width: 150px;
+  max-height: 150px;
+  border-radius: 150px;
+}
+
+.publ-content {
+  font-size: 25px;
+}
+
+.publ-sub {
+  font-size: 17px;
+}
+
+.doing-group {
+  overflow: auto;
+}
+
+.chat-image {
+  max-width: 100px;
+  max-height: 100px;
+}
+
+.message_curuser {
+  justify-content: end;
+}
+
+.message_date {
+  font-size: 10px;
+  display: flex;
+  justify-content: end;
+}
+
+
+.chat-avatar {
+  max-width: 100px;
+  max-height: 100px;
+  border-radius: 100px;
+}
+
+.mini-avatar {
+  max-width: 20px;
+  max-height: 20px;
+  border-radius: 10px;
+}
