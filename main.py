@@ -44,10 +44,31 @@ def logout():
 
 # main page
 @app.route('/')
-@app.route('/index')
-def index():
-    """Main page"""
-    return render_template("index.html", cur_url=request.base_url.split('/')[-1])
+def main_page():
+    """"Main page. Contains recent publications"""
+
+    # get all not private publications and reverse array
+    # because we need to sort publications by created date
+    publications = db.session.query(Publication).filter(
+        Publication.is_private != 1).all()[::-1]
+
+    # getting likes
+    likes = request.cookies.get("likes", [])
+
+    # if likes are an empty string, then we make an empty list from it
+    # otherwise there will be a TypeError error
+    if not likes:
+        likes = []
+
+    # forming an array which contains
+    # id of publications that the current user has liked
+    else:
+        likes = [int(item) for item in likes.split(' ')]
+
+    return render_template("main.html",
+                           cur_url=request.base_url.split('/')[-1],
+                           data=publications,
+                           likes=likes)
 
 
 """==========USERS=============="""
@@ -78,7 +99,6 @@ def userava(id):
     return avatar
 
 
-# смена аватара
 @app.route('/change_avatar/<int:id>', methods=["GET", "POST"])
 @login_required
 def new_avatar(id):
@@ -194,6 +214,7 @@ def profile(id):
 
 
 @app.route('/profile/make_like/<int:publ_id>')
+@login_required
 def make_like(publ_id):
     """Put like or remove like to publication with publ_id id
 
@@ -355,6 +376,7 @@ def members():
 
 
 @app.route('/friends')
+@login_required
 def friends():
     """Get all friends of current user
 
@@ -393,6 +415,7 @@ def friends():
 
 
 @app.route('/follow/<int:id>')
+@login_required
 def follow(id):
     """Follow user with id equals to id argument
 
@@ -414,6 +437,7 @@ def follow(id):
 
 
 @app.route('/unfollow/<int:id>')
+@login_required
 def unfollow(id):
     """Unfollow user with id equals to id argument
 
@@ -438,6 +462,7 @@ def unfollow(id):
 
 
 @app.route('/new_publication/<int:id>', methods=["GET", "POST"])
+@login_required
 def new_publication(id):
     """Create a new publication with
     the author id equals to id argument
@@ -469,6 +494,7 @@ def new_publication(id):
 
 
 @app.route('/edit_publication/<int:id>', methods=["GET", "POST"])
+@login_required
 def edit_publication(id):
     """Edit existing publication with
     the id equals to id argument
@@ -514,6 +540,7 @@ def edit_publication(id):
 
 
 @app.route('/delete_publication/<int:id>', methods=["GET", "POST"])
+@login_required
 def delete_publication(id):
     """Delete existing publication with
     the id equals to id argument
@@ -630,7 +657,6 @@ def login():
     # GET
     return render_template('login.html',
                            cur_url=request.base_url.split('/')[-1],
-                           title='Авторизация',
                            form_auth=form_auth)
 
 
@@ -638,6 +664,7 @@ def login():
 
 
 @app.route('/new_chat/<int:user_id>')
+@login_required
 def new_chat(user_id):
     """Creates new chat
 
@@ -746,6 +773,7 @@ def read_all_msgs(chat_id, user_id):
 
 
 @app.route('/chats')
+@login_required
 def get_chats():
     """Triggered when user goes to the chat page
 
@@ -776,6 +804,7 @@ def get_chats():
 
 
 @app.route('/chat/<int:id>')
+@login_required
 def chat(id):
     """Triggered when user clicks on Enter chat button
 
@@ -913,4 +942,4 @@ if __name__ == '__main__':
     app.register_blueprint(blueprint)
 
     # run the app
-    socketio.run(app, host="127.0.0.1", debug=True)
+    socketio.run(app)
