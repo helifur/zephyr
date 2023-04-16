@@ -5,3 +5,4 @@ flask_socketio
 flask_sqlalchemy
 simple-websocket
 pillow
+gevent

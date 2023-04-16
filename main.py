@@ -50,7 +50,7 @@ def main_page():
     # get all not private publications and reverse array
     # because we need to sort publications by created date
     publications = db.session.query(Publication).filter(
-        Publication.is_private != 1).all()[::-1]
+        (Publication.user_id == current_user.id) | (Publication.is_private != 1)).all()[::-1]
 
     # getting likes
     likes = request.cookies.get("likes", [])
@@ -942,4 +942,4 @@ if __name__ == '__main__':
     app.register_blueprint(blueprint)
 
     # run the app
-    socketio.run(app, allow_unsafe_werkzeug=True)
+    socketio.run(app, debug=True)
