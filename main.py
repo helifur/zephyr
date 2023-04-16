@@ -47,10 +47,19 @@ def logout():
 def main_page():
     """"Main page. Contains recent publications"""
 
-    # get all not private publications and reverse array
-    # because we need to sort publications by created date
-    publications = db.session.query(Publication).filter(
-        (Publication.user_id == current_user.id) | (Publication.is_private != 1)).all()[::-1]
+    # if we able to show private publications of current user
+    if current_user.is_authenticated:
+        # get all not private publications of other users and
+        # all private publications of current user and reverse array
+        # because we need to sort publications by created date
+        publications = db.session.query(Publication).filter(
+            (Publication.user_id == current_user.id) | (Publication.is_private != 1)).all()[::-1]
+
+    else:
+        # get all not private publications and reverse array
+        # because we need to sort publications by created date
+        publications = db.session.query(Publication).filter(
+            Publication.is_private != 1).all()[::-1]
 
     # getting likes
     likes = request.cookies.get("likes", [])

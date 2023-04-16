@@ -3,6 +3,5 @@ flask_login
 flask_wtf
 flask_socketio
 flask_sqlalchemy
-simple-websocket
 pillow
-gevent
+gunicorn
