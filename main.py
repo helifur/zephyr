@@ -379,7 +379,7 @@ def members():
     """Get all members of Zephyr"""
 
     # getting all users
-    data = db.session.query(User).filter(User.id > 0).all()
+    data = db.session.query(User).filter(User.id >= 0).all()
 
     return render_template("members.html", data=data)
 
