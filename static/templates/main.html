@@ -12,9 +12,9 @@
     <h4 class="fw-normal text-center">Публикаций пока нет!</h4>
     {% else %}
 
-    <div class="mt-4 container d-flex flex-column align-items-center">
+    <div style="max-width: 554px;" class="mt-4 container d-flex flex-column align-items-center">
         {% for item in data %}
-        <div style="max-width: 554px;" class="p-2 border rounded mb-2">
+        <div style="width: 100%;" class="p-2 border rounded mb-2">
             <div class="publ-content mb-1">
                 <p class="m-0 text-break">{{ item.content }}</p>
             </div>

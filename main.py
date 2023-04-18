@@ -743,6 +743,9 @@ def check_all_chats():
     return ans
 
 
+"""=========API=========="""
+
+
 @blueprint.route('/api/check_chats')
 def check_chats():
     """"Calling check_all_chats function"""
@@ -779,6 +782,9 @@ def read_all_msgs(chat_id, user_id):
         return jsonify({"message": "error"})
 
     return jsonify({"message": "success"})
+
+
+"""=========API-END=========="""
 
 
 @app.route('/chats')
