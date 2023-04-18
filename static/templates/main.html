@@ -16,7 +16,11 @@
         {% for item in data %}
         <div style="width: 100%;" class="p-2 border rounded mb-2">
             <div class="publ-content mb-1">
-                <p class="m-0 text-break">{{ item.content }}</p>
+                <p class="m-0 text-break">{{ item.content }}
+                    {% if item.is_private %}
+                    <span class="badge bg-secondary">Приватный</span>
+                    {% endif %}
+                </p>
             </div>
 
             <div class="publ-sub border-top pt-1">
