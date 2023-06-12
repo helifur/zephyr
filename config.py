@@ -5,11 +5,12 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO
 
 basedir = os.path.abspath(os.path.dirname(__file__))
+db_path = os.path.abspath(os.getcwd()) + "\static\db\data.db"
 
 # инициализируем приложения
 app = Flask(__name__, template_folder="static/templates")
 app.config['SECRET_KEY'] = 'zephyr_secret_key'
-app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.getcwd()}/static/db/data.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + db_path
 
 db = SQLAlchemy(app)
 

@@ -950,8 +950,8 @@ def handle_message(data):
 
 if __name__ == '__main__':
     # create all tables
-    with app.app_context():
-        db.create_all()
+    # with app.app_context():
+    #     db.create_all()
 
     # create api
     app.register_blueprint(blueprint)
