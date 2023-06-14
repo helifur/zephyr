@@ -5,7 +5,19 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO
 
 basedir = os.path.abspath(os.path.dirname(__file__))
-db_path = os.path.abspath(os.getcwd()) + "\static\db\data.db"
+
+# в linux и windows разные файловые системы
+# поэтому чтобы найти файл бд
+# нужно предусмотреть варианты запуска сервера
+# с разных ОС
+
+# если сервер поднимается на винде
+if os.name == 'nt':
+    db_path = os.path.abspath(os.getcwd()) + "\static\db\data.db"
+
+# на линуксе
+elif os.name == 'posix':
+    db_path = os.path.abspath(os.getcwd()) + "/static/db/data.db"
 
 # инициализируем приложения
 app = Flask(__name__, template_folder="static/templates")

@@ -4,4 +4,3 @@ flask_wtf
 flask_socketio
 flask_sqlalchemy
 pillow
-gunicorn
